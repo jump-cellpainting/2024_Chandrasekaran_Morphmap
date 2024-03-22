@@ -1,0 +1,142 @@
+---
+title: "spring_science_ORF_models"
+author: "Will Van Trump"
+date: "2023-10-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) #Sets working directory to notebook location, but only if using RStudio, otherwise need to run notebook from it's location.
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Basic Gene Set Enrichment on Death Model
+
+This analysis performs a basic gene set evaluation for genes that show an increase in the death phenotype prediction. Cut-off is arbitrary, seeking to pull the top \~200 genes.
+
+The cutoff of -0.065 applied to the difference between untreated wells and the treatment wells was identified by looking at the [distribution of all values] (<https://app.springscience.com/workspace/jump-cp/e/jump_cp-u2os-20221101/measurements?colorBy=comparison-rd-gn&controlValue=Untreated+cells&features=%5B%7B%22featureType%22%3A%22prediction%22%2C%22featureName%22%3A%22DeadCellPrediction%22%2C%22featureColumns%22%3A%5B%22Alive%22%5D%7D%2C%7B%22featureType%22%3A%22prediction%22%2C%22featureName%22%3A%22Actin%2520Middle%2520V2%2520%255BAC%255D%2520Prediction%22%2C%22featureColumns%22%3A%5B%22actin+middle%22%5D%7D%2C%7B%22featureType%22%3A%22prediction%22%2C%22featureName%22%3A%22MitosisPrediction%22%2C%22featureColumns%22%3A%5B%22mitotic%22%5D%7D%5D&groupBy=&mode=overview&overviewColorBy=&stratifyColumns=plate&subgroupBy=&subgroupByReference=&tab=ranking&treatmentColumn=treatment_id&visualization=scatterplot>) and approximating the leading edge of the long tail.
+
+There is a cluster of genes that show reduced cell death... but nothing falls out of the GSE, so I'm assuming those values are due to a limitation of the model in calling death in a sub-population of the dataset.
+
+```{r get_gene_data}
+library(ggplot2)
+library(ggrepel)
+
+#get gene data
+model_data = read.csv("./Data/ranking_JUMPCP_ORF.csv")
+model_data$gene_name = str_split(model_data$treatment_name," ",simplify = T)[,1]
+
+## make point ranking plot for genes
+
+test_metric = "Alive..mean.diff."
+#make ranking
+model_data = model_data[order(model_data[,test_metric]),]
+model_data$gene_rank = 1:nrow(model_data)
+
+ggplot(model_data,aes_string(x="gene_rank",y=test_metric)) + 
+  geom_point() + 
+  ylab("Diff in percent alive relative to untreated cells") +
+  geom_text_repel(data=subset(model_data, gene_rank < 20),
+            aes(label=gene_name),hjust = "outward",direction='x',size = 3) + 
+  theme_bw()
+```
+
+```{r basic_death_gse}
+#if(!require("BiocManager", quietly = TRUE)){install.packages("BiocManager")}
+#BiocManager::install("msigdbr")
+#BiocManager::install("enrichplot")
+#BiocManager::install("clusterProfiler")
+
+
+library(msigdbr)
+library(tidyverse)
+library(dplyr)
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+
+#Get annotation set
+H.msig = msigdbr(category = "C2")
+H.msig = H.msig %>% filter(grepl("WP_",gs_name))
+
+#Consider to top 
+signif = model_data %>% filter(Alive..mean.diff. < -0.065)
+
+signif.genes = unique(signif$gene_name)
+H.genes = select(H.msig, gs_name, human_gene_symbol)
+
+#run enrichment
+enrich.H = enricher(gene = signif.genes, TERM2GENE = H.genes)
+
+enrich_results = enrich.H@result
+
+head(enrich_results,n = 30)
+
+
+dotplot(enrich.H,showCategory = 20,font.size = 8,title = "Increased Death Model")
+```
+
+## AMG900 ORF analysis
+
+For this section, we trained a classifier on the 4 small molecule controls (AMG900, Quinidine, TC-S-7004, and LY2109761) along with DMSO and untreated cells. Total classifier performance was very good (98% accuracy: https://app.springscience.com/workspace/jump-cp/e/jump_cp-u2os-20221101/sl/edit/e788bd41-c6b4-4e67-8b99-d83f859d3ba8).
+
+Input values available here:
+https://app.springscience.com/workspace/jump-cp/e/jump_cp-u2os-20221101/measurements?colorBy=comparison-rd-gn&controlValue=Untreated+cells&featureType=prediction&features=%5B%7B%22featureType%22%3A%22prediction%22%2C%22featureName%22%3A%22eGFP%2520vs%2520UntreatedPrediction%22%2C%22featureColumns%22%3A%22all%22%7D%2C%7B%22featureType%22%3A%22prediction%22%2C%22featureName%22%3A%22Control%2520Compounds%2520ClassificationPrediction%22%2C%22featureColumns%22%3A%22all%22%7D%2C%7B%22featureType%22%3A%22prediction%22%2C%22featureName%22%3A%22Cell%2520ProtrusionsPrediction%22%2C%22featureColumns%22%3A%5B%22High+Protrusion%22%5D%7D%5D&groupBy=&mode=table&overviewColorBy=null&overviewColumns=%7B%22id%22%3A%22_f_%5CnControl%2520Compounds%2520ClassificationPrediction%5CnIVUGFMLRJOCGAS-UHFFFAOYSA-N%22%2C%22source%22%3A%22features%22%7D&serializedFilter=eyJvcGVyYXRvciI6IkFuZCIsImZpbHRlclZhbHVlcyI6W3sidHlwZSI6InNlbGVjdCIsImNvbHVtbklkIjoidHJlYXRtZW50X3R5cGUiLCJxdWVyeVRleHQiOlsiT1JGIl0sImNvbmRpdGlvbiI6ImlzIGFueSBvZiJ9XX0%3D&similarTo=eGFP+%28Hahn+Lab+eGFP%29&stratifyColumns=plate&subgroupBy=&subgroupByReference=&tab=ranking&treatmentColumn=treatment_name&visualization=scatterplot
+
+
+```{r filopodia_model}
+library(msigdbr)
+library(tidyverse)
+library(dplyr)
+library(clusterProfiler)
+library(enrichplot)
+library(ggplot2)
+library(ggrepel)
+
+#get gene data
+model_data = read.csv("./Data/comp_egfp_classifiers.csv")
+model_data$gene_name = str_split(model_data$treatment_name," ",simplify = T)[,1]
+
+## make point ranking plot for genes
+
+#test_metric = "High.Protrusion..mean.diff."
+test_metric = "IVUGFMLRJOCGAS.UHFFFAOYSA.N..mean.diff."
+#make ranking
+model_data = model_data[order(model_data[,test_metric],decreasing = T),]
+model_data$gene_rank = 1:nrow(model_data)
+
+H.msig = msigdbr(category = "C2")
+H.msig = H.msig %>% filter(grepl("WP_",gs_name))
+#length(unique(H.msig$gs_name))
+
+#Consider to top 
+cut.off = 0.01
+ggplot(model_data,aes_string(x="gene_rank",y=test_metric)) + 
+  geom_point() + 
+  ylab("Increase in classification prediction over untreated cells") +
+  ggtitle(test_metric) +
+  geom_hline(yintercept = cut.off,color = 'red') + 
+  geom_text_repel(data=subset(model_data, gene_rank < 20 | gene_rank > 12654),
+            aes(label=gene_name),hjust = "outward",direction='x',size = 3) + 
+  theme_bw()
+
+
+
+signif = model_data %>% filter(IVUGFMLRJOCGAS.UHFFFAOYSA.N..mean.diff. > cut.off)
+
+signif.genes = unique(signif$gene_name)
+H.genes = select(H.msig, gs_name, human_gene_symbol)
+
+#run enrichment
+enrich.H = enricher(gene = signif.genes, TERM2GENE = H.genes)
+
+enrich.H@result
+enrich_set = enrich.H@result
+
+dotplot(enrich.H,showCategory = 20,font.size = 8,title = "Mitotic Model")
+
+```
+
+
+
+
