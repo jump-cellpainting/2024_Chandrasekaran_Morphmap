@@ -26,3 +26,17 @@ Infection effiency data was obtained from GPP (`input/JUMP-ORF-Infection-Efficie
 - `Minus_Blast`: Minus blasticidin count.
 - `I.E_percentage`: Infection efficiency percentage (`Plus_Blast`/`Minus_Blast`).
 - `Minus_Avg_Background`: `I.E_percentage` - Background (value changes depending on the batch).
+
+### HGNC Approved symbol
+HGNC approved symbols were downloaded from https://genenames.org/download/custom/. The file was stored in `input/hgnc_approved_symbol.tsv`. The file was then processed in the notebook `03.process-hgnc-approved-symbol.ipynb` and then stored in `output/hgnc_approved_symbol_processed.tsv`. The file contains the following columns
+
+-`Approved_symbol`: HGNC approved symbol
+-`Previous_symbols`: `|` separatd previous symbols
+-`Gene_group_ID`: Gene group ID
+-`NCBI_Gene_ID`: NCBI gene ID
+
+### NCBI dataset
+NCBI dataset was downloaded from https://www.ncbi.nlm.nih.gov/datasets/gene/taxon/9606/?gene_type=protein-coding,small-rnas,pseudogenes,non-coding. The files were stored in `input/ncbi_dataset.tsv`. The file was then processed in the notebook `04.process-ncbi-dataset.ipynb` and then stored in `output/ncbi_dataset_processed.tsv`. The file contains the following columns
+
+- `NCBI_Gene_ID`: NCBI gene ID
+- `Approved_Symbol`: HGNC approved symbol
