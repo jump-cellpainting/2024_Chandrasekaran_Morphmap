@@ -40,3 +40,15 @@ NCBI dataset was downloaded from https://www.ncbi.nlm.nih.gov/datasets/gene/taxo
 
 - `NCBI_Gene_ID`: NCBI gene ID
 - `Approved_Symbol`: HGNC approved symbol
+
+### ORF Experiment metadata
+This file was created in a private repository (https://github.com/jump-cellpainting/morphmap/blob/main/00.0.explore-data/0.create-experiment-metadata.ipynb). The file contains the following columns
+
+- `Batch`: batch name
+- `Batch_name`: Full batch name
+- `Plate_Map_Name`: Platemap name
+- `Assay_Plate_Barcode`: Plate name
+- `Type`: Type of plate - ORF, Untreated, Target2, Target1
+- `Anomaly`: Any anamalous behavior observed during data generation or analysis
+- `Density`: Cell seeding density
+- `Polybrene`: Indicates whether Polybrene is present or absent
