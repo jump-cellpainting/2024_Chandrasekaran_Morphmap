@@ -72,4 +72,7 @@ Homologue data was downloaded from https://ftp.ncbi.nih.gov/pub/HomoloGene/build
 - Protein accession
 
 ### Wikipathway annotations
-Wikipathway annotations were downloaded from 
+Wikipathway annotations were downloaded as described in `08.process-wikipathway-annotations.ipynb` and stored in the `input/` folder. Then they were processed in the notebook `08.process-wikipathway-annotations.ipynb` and the processed file was written to `output/wikipathway-annotations.tsv.gz`. The file contains the following columns.
+
+- `ncbi_geneid`: NCBI gene ID
+- `wikipathway`: Wikipathway ID
