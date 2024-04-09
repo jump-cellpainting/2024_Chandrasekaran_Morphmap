@@ -52,3 +52,24 @@ This file was created in a private repository (https://github.com/jump-cellpaint
 - `Anomaly`: Any anamalous behavior observed during data generation or analysis
 - `Density`: Cell seeding density
 - `Polybrene`: Indicates whether Polybrene is present or absent
+
+### Gene ontology annotation
+The annotation files were downloaded as described in `06.process-gene-ontology-annotations.ipynb` and stored in the `input/` folder. Then they were processed in the notebook `06.process-gene-ontology-annotations.ipynb` and the processed file was written to `output/gene-ontology-annotations.tsv.gz`. The file contains the following columns.
+
+- `gene`: Gene symbol.
+- `go_bp_list`: A list of `|` separated Biological Process GO terms.
+- `go_cc_list`: A list of `|` separated Cellular Component GO terms.
+- `go_mf_list`: A list of `|` separated Molecular Function GO terms.
+
+### Homologue data
+Homologue data was downloaded from https://ftp.ncbi.nih.gov/pub/HomoloGene/build68/homologene.data and stored in the `input/` folder. The was processed in the notebook `07.process-homologue-data.ipynb` and the processed file was written to `output/homologue_data.tsv.gz`. The file contains the following columns (the columns names are not in the file).
+
+- HID (HomoloGene group id)
+- Taxonomy ID
+- Gene ID
+- Gene Symbol
+- Protein gi
+- Protein accession
+
+### Wikipathway annotations
+Wikipathway annotations were downloaded from 
