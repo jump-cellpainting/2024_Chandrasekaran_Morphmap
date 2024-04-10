@@ -15,6 +15,7 @@ import re
 from copairs import compute
 from copairs.matching import Matcher, UnpairedException
 import logging
+from scipy.sparse import coo_matrix
 
 logger = logging.getLogger("copairs")
 
@@ -171,23 +172,17 @@ def evaluate_and_filter(df, columns) -> Tuple[pd.DataFrame, List[str]]:
     return df, parsed_cols
 
 
-def cosine_similarity(
-    meta, feats, pos_sameby, pos_diffby, neg_sameby, neg_diffby, batch_size=20000
-) -> pd.DataFrame:
-    columns = flatten_str_list(pos_sameby, pos_diffby, neg_sameby, neg_diffby)
+def cosine_similarity(id, feats, batch_size=20000):
+    n_id = len(id)
+    indices = [_ for _ in range(n_id)]
 
-    # Critical!, otherwise the indexing wont work
-    meta = meta.reset_index(drop=True).copy()
-    matcher = Matcher(*evaluate_and_filter(meta, columns), seed=0)
-
-    logger.info("Finding positive pairs...")
-    pos_pairs = matcher.get_all_pairs(sameby=pos_sameby, diffby=pos_diffby)
-    pos_total = sum(len(p) for p in pos_pairs.values())
+    pos_pairs = [list(itertools.combinations(indices, 2))]
+    pos_total = sum(len(p) for p in pos_pairs)
 
     if pos_total == 0:
         raise UnpairedException("Unable to find positive pairs.")
     pos_pairs = np.fromiter(
-        itertools.chain.from_iterable(pos_pairs.values()),
+        itertools.chain.from_iterable(pos_pairs),
         dtype=np.dtype((np.int32, 2)),
         count=pos_total,
     )
@@ -195,18 +190,16 @@ def cosine_similarity(
     logger.info("Computing positive similarities...")
     pos_sims = compute.pairwise_cosine(feats, pos_pairs, batch_size)
 
-    # Create cosine similarity matrix
-    size = len(meta)
-    cos_sim = np.zeros((size, size))
-    cos_sim[np.triu_indices(size, k=1)] = pos_sims
+    rows, cols = zip(*pos_pairs)
+    cos_sim = coo_matrix((pos_sims, (rows, cols)), shape=(n_id, n_id)).toarray()
+
     cos_sim += cos_sim.T
     np.fill_diagonal(cos_sim, 1)
 
     cos_sim_df = pd.DataFrame(
         cos_sim,
-        index=meta[pos_diffby].values.ravel(),
-        columns=meta[pos_diffby].values.ravel(),
+        index=id,
+        columns=id,
     )
-
 
     return cos_sim_df
