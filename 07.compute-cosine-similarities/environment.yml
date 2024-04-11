@@ -18,6 +18,7 @@ dependencies:
 - conda-forge::umap-learn=0.5.3
 - conda-forge::pyarrow
 - conda-forge::tqdm=4.64.1
+- conda-forge::pycirclize 
 - pip
 - pip:
   - git+https://github.com/cytomining/copairs@de37b93b9f14cffc7c53afd9b8f8cc15c1d8538f
