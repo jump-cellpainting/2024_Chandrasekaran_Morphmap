@@ -1,0 +1,3 @@
+modality,essentiality_False_phenotype_False,essentiality_False_phenotype_True,essentiality_True_phenotype_False,essentiality_True_phenotype_True,odds_ratio,pvalue
+ORF,5183,660,7059,714,0.7943141572975827,5.6729407008364943e-05
+CRISPR,2234,60,5054,647,4.766514971639626,6.080069106657798e-43

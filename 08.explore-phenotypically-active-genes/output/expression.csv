@@ -1,0 +1,3 @@
+modality,expression_False_phenotype_False,expression_False_phenotype_True,expression_True_phenotype_False,expression_True_phenotype_True,odds_ratio,pvalue
+ORF,4444,1399,5872,1901,1.028377120286386,0.492203566911541
+CRISPR,1880,414,4122,1579,1.739528909328289,3.5605434592262244e-20
