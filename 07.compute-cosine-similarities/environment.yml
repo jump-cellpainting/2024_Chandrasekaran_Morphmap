@@ -20,6 +20,7 @@ dependencies:
 - conda-forge::tqdm=4.64.1
 - conda-forge::pycirclize 
 - conda-forge::openpyxl==3.0.9
+- conda-forge::fastcluster=1.2.6
 - pip
 - pip:
   - git+https://github.com/cytomining/copairs@de37b93b9f14cffc7c53afd9b8f8cc15c1d8538f
