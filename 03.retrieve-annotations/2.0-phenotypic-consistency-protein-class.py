@@ -61,6 +61,7 @@ orf_annotation_df = (
         "../00.download-and-process-annotations/output/orf_metadata.tsv.gz", sep="\t"
     )[["Metadata_NCBI_Gene_ID", f"{annotation_col}"]]
     .dropna()
+    .drop_duplicates(subset=["Metadata_NCBI_Gene_ID"])
     .assign(
         col=lambda x: x[f"{annotation_col}"].str.split("|")
     )
@@ -85,6 +86,7 @@ crispr_annotation_df = (
         "../00.download-and-process-annotations/output/crispr_metadata.tsv.gz", sep="\t"
     )[["Metadata_NCBI_Gene_ID", f"{annotation_col}"]]
     .dropna()
+    .drop_duplicates(subset=["Metadata_NCBI_Gene_ID"])
     .assign(
         col=lambda x: x[f"{annotation_col}"].str.split("|")
     )
@@ -119,7 +121,7 @@ for modality in all_profiles:
         df = df.merge(phenotypic_activity_df, on="Metadata_JCP2022", how="inner").query(
             "Metadata_pert_type!='control'"
         )
-        consensus_df = utils.consensus(df, "Metadata_JCP2022")
+        consensus_df = utils.consensus(df, "Metadata_NCBI_Gene_ID")
 
         if modality == "ORF":
             consensus_df["Metadata_NCBI_Gene_ID"] = (
