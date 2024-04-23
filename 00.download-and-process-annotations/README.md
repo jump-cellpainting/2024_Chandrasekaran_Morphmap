@@ -1,5 +1,5 @@
 ### Human Protein Atlas data 
-A number of gene annotations were downloaded from the Human Protein Atlas webpage (https://www.proteinatlas.org/download/proteinatlas.tsv.zip) (v23.0). The output was saved in the folder `input/proteinatlas.tsv.zip`. The file was processed in the notebook `00.process-human-protein-atlas-annotations.ipynb`. Four output files were then written to the `output` folder.
+A number of gene annotations were downloaded from the Human Protein Atlas webpage (https://www.proteinatlas.org/download/proteinatlas.tsv.zip) (v23.0). The output was saved in the folder `input/proteinatlas.tsv.zip`. The file was processed in the notebook `00.0.process-human-protein-atlas-annotations.ipynb`. Four output files were then written to the `output` folder.
 
 - `human_protein_atlas_class_annotations.tsv.gz`: Protein class annotations.
 - `human_protein_atlas_location_annotations.tsv.gz`: Subcellular location annotations.
