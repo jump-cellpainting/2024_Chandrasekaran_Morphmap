@@ -50,16 +50,10 @@ neg_diffby = [f"{multi_label_col}"]
 orf_annotation_df = (
     pd.read_csv(
         "../00.download-and-process-annotations/output/orf_metadata.tsv.gz", sep="\t"
-    )[["Metadata_NCBI_Gene_ID", f"{annotation_col}"]]
+    )[["Metadata_JCP2022", f"{annotation_col}"]]
     .dropna()
-    .drop_duplicates(subset=["Metadata_NCBI_Gene_ID"])
-    .assign(
-        col=lambda x: list(x[f"{annotation_col}"].str.split("|"))
-    ).rename(columns={"col": f"{multi_label_col}"})
-)
-
-orf_annotation_df.Metadata_NCBI_Gene_ID = (
-    orf_annotation_df.Metadata_NCBI_Gene_ID.astype(int).astype(str)
+    .assign(col=lambda x: list(x[f"{annotation_col}"].str.split("|")))
+    .rename(columns={"col": f"{multi_label_col}"})
 )
 
 
@@ -69,15 +63,10 @@ orf_annotation_df.Metadata_NCBI_Gene_ID = (
 crispr_annotation_df = (
     pd.read_csv(
         "../00.download-and-process-annotations/output/crispr_metadata.tsv.gz", sep="\t"
-    )[["Metadata_NCBI_Gene_ID", f"{annotation_col}"]]
+    )[["Metadata_JCP2022", f"{annotation_col}"]]
     .dropna()
-    .drop_duplicates(subset=["Metadata_NCBI_Gene_ID"])
     .assign(col=lambda x: list(x[f"{annotation_col}"].str.split("|")))
     .rename(columns={"col": f"{multi_label_col}"})
-)
-
-crispr_annotation_df.Metadata_NCBI_Gene_ID = (
-    crispr_annotation_df.Metadata_NCBI_Gene_ID.astype(int).astype(str)
 )
 
 
@@ -102,23 +91,19 @@ for modality in all_profiles:
         consensus_df = utils.consensus(df, "Metadata_NCBI_Gene_ID")
 
         if modality == "ORF":
-            consensus_df["Metadata_NCBI_Gene_ID"] = (
-                consensus_df["Metadata_NCBI_Gene_ID"].astype(str)
-            )
-            consensus_df = consensus_df.merge(
+            df = df.merge(
                 orf_annotation_df,
-                on="Metadata_NCBI_Gene_ID",
+                on="Metadata_JCP2022",
                 how="inner",
             )
         elif modality == "CRISPR":
-            consensus_df["Metadata_NCBI_Gene_ID"] = (
-                consensus_df["Metadata_NCBI_Gene_ID"].astype(int).astype(str)
-            )
-            consensus_df = consensus_df.merge(
+            df = df.merge(
                 crispr_annotation_df,
-                on="Metadata_NCBI_Gene_ID",
+                on="Metadata_JCP2022",
                 how="inner",
             )
+
+        consensus_df = utils.consensus(df, "Metadata_NCBI_Gene_ID")
 
         metadata_df = utils.get_metadata(consensus_df)
         feature_df = utils.get_featuredata(consensus_df)

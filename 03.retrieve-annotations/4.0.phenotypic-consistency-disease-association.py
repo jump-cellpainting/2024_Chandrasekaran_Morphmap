@@ -57,21 +57,16 @@ disease_blocklist = [
 orf_annotation_df = (
     pd.read_csv(
         "../00.download-and-process-annotations/output/orf_metadata.tsv.gz", sep="\t"
-    )[["Metadata_NCBI_Gene_ID", f"{annotation_col}"]]
+    )[["Metadata_JCP2022", f"{annotation_col}"]]
     .dropna()
-    .drop_duplicates(subset=["Metadata_NCBI_Gene_ID"])
-    .assign(
-        col=lambda x: list(x[f"{annotation_col}"].str.split("|"))
-    ).rename(columns={"col": f"{multi_label_col}"})
+    .assign(col=lambda x: list(x[f"{annotation_col}"].str.split("|")))
+    .rename(columns={"col": f"{multi_label_col}"})
     .explode(f"{multi_label_col}")
     .query(f"{multi_label_col} not in @disease_blocklist")
     .drop(columns=f"{annotation_col}")
-    .groupby("Metadata_NCBI_Gene_ID")[f"{multi_label_col}"].apply(lambda x: np.unique(x))
+    .groupby("Metadata_JCP2022")[f"{multi_label_col}"]
+    .apply(lambda x: np.unique(x))
     .reset_index()
-)
-
-orf_annotation_df.Metadata_NCBI_Gene_ID = (
-    orf_annotation_df.Metadata_NCBI_Gene_ID.astype(int).astype(str)
 )
 
 
@@ -81,20 +76,16 @@ orf_annotation_df.Metadata_NCBI_Gene_ID = (
 crispr_annotation_df = (
     pd.read_csv(
         "../00.download-and-process-annotations/output/crispr_metadata.tsv.gz", sep="\t"
-    )[["Metadata_NCBI_Gene_ID", f"{annotation_col}"]]
+    )[["Metadata_JCP2022", f"{annotation_col}"]]
     .dropna()
-    .drop_duplicates(subset=["Metadata_NCBI_Gene_ID"])
     .assign(col=lambda x: list(x[f"{annotation_col}"].str.split("|")))
     .rename(columns={"col": f"{multi_label_col}"})
     .explode(f"{multi_label_col}")
     .query(f"{multi_label_col} not in @disease_blocklist")
     .drop(columns=f"{annotation_col}")
-    .groupby("Metadata_NCBI_Gene_ID")[f"{multi_label_col}"].apply(lambda x: np.unique(x))
+    .groupby("Metadata_JCP2022")[f"{multi_label_col}"]
+    .apply(lambda x: np.unique(x))
     .reset_index()
-)
-
-crispr_annotation_df.Metadata_NCBI_Gene_ID = (
-    crispr_annotation_df.Metadata_NCBI_Gene_ID.astype(int).astype(str)
 )
 
 
@@ -116,26 +107,21 @@ for modality in all_profiles:
         df = df.merge(phenotypic_activity_df, on="Metadata_JCP2022", how="inner").query(
             "Metadata_pert_type!='control'"
         )
-        consensus_df = utils.consensus(df, "Metadata_NCBI_Gene_ID")
-
+        
         if modality == "ORF":
-            consensus_df["Metadata_NCBI_Gene_ID"] = (
-                consensus_df["Metadata_NCBI_Gene_ID"].astype(str)
-            )
-            consensus_df = consensus_df.merge(
+            df = df.merge(
                 orf_annotation_df,
-                on="Metadata_NCBI_Gene_ID",
+                on="Metadata_JCP2022",
                 how="inner",
             )
         elif modality == "CRISPR":
-            consensus_df["Metadata_NCBI_Gene_ID"] = (
-                consensus_df["Metadata_NCBI_Gene_ID"].astype(int).astype(str)
-            )
-            consensus_df = consensus_df.merge(
+            df = df.merge(
                 crispr_annotation_df,
-                on="Metadata_NCBI_Gene_ID",
+                on="Metadata_JCP2022",
                 how="inner",
             )
+
+        consensus_df = utils.consensus(df, "Metadata_NCBI_Gene_ID")
 
         metadata_df = utils.get_metadata(consensus_df)
         feature_df = utils.get_featuredata(consensus_df)
