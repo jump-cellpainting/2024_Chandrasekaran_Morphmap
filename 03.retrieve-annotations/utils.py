@@ -93,7 +93,7 @@ def consensus(profiles_df, group_by_feature):
         Name of the column
     Returns:
     -------
-    pandas.DataFrame of the same shape as `plate`
+    pandas.DataFrame 
     """
 
     metadata_df = get_metadata(profiles_df).drop_duplicates(subset=[group_by_feature])
