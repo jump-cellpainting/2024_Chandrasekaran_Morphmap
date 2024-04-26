@@ -27,9 +27,9 @@ all_profiles = {
     },
 }
 
-retrieval_label = "disease_association"
-multi_label_col = "Metadata_disease_list"
-annotation_col = "Metadata_disease_involvement"
+retrieval_label = "gene-group"
+multi_label_col = "Metadata_gene_group_list"
+annotation_col = "Metadata_gene_group_id"
 
 
 batch_size = 20000
@@ -40,13 +40,6 @@ pos_sameby = [f"{multi_label_col}"]
 pos_diffby = []
 neg_sameby = []
 neg_diffby = [f"{multi_label_col}"]
-
-disease_blocklist = [
-     "Disease variant", 
-     "Cancer-related genes",
-     "FDA approved drug targets",
-     "Intellectual disability"
-]
 
 
 # Read protein class annotations
@@ -63,11 +56,6 @@ orf_annotation_df = (
     .assign(
         col=lambda x: list(x[f"{annotation_col}"].str.split("|"))
     ).rename(columns={"col": f"{multi_label_col}"})
-    .explode(f"{multi_label_col}")
-    .query(f"{multi_label_col} not in @disease_blocklist")
-    .drop(columns=f"{annotation_col}")
-    .groupby("Metadata_NCBI_Gene_ID")[f"{multi_label_col}"].apply(lambda x: np.unique(x))
-    .reset_index()
 )
 
 orf_annotation_df.Metadata_NCBI_Gene_ID = (
@@ -86,11 +74,6 @@ crispr_annotation_df = (
     .drop_duplicates(subset=["Metadata_NCBI_Gene_ID"])
     .assign(col=lambda x: list(x[f"{annotation_col}"].str.split("|")))
     .rename(columns={"col": f"{multi_label_col}"})
-    .explode(f"{multi_label_col}")
-    .query(f"{multi_label_col} not in @disease_blocklist")
-    .drop(columns=f"{annotation_col}")
-    .groupby("Metadata_NCBI_Gene_ID")[f"{multi_label_col}"].apply(lambda x: np.unique(x))
-    .reset_index()
 )
 
 crispr_annotation_df.Metadata_NCBI_Gene_ID = (
