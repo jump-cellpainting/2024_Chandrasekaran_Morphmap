@@ -17,14 +17,8 @@ import logging
 
 
 all_profiles = {
-    "ORF": {
-        "ORF": "wellpos_cc_var_mad_outlier_featselect_sphering_harmony",
-        "ORF-CRISPR-pipeline": "wellpos_var_mad_int_featselect_harmony_PCA",
-    },
-    "CRISPR": {
-        "CRISPR": "wellpos_var_mad_int_featselect_harmony_PCA_corrected",
-        "CRISPR-ORF-pipeline": "wellpos_cc_var_mad_outlier_featselect_sphering_harmony_PCA_corrected",
-    },
+    "ORF": "wellpos_cc_var_mad_outlier_featselect_sphering_harmony",
+    "CRISPR": "wellpos_cc_var_mad_outlier_featselect_sphering_harmony_PCA_corrected",
 }
 
 retrieval_label = "disease_association"
@@ -57,14 +51,14 @@ disease_blocklist = [
 orf_annotation_df = (
     pd.read_csv(
         "../00.download-and-process-annotations/output/orf_metadata.tsv.gz", sep="\t"
-    )[["Metadata_JCP2022", f"{annotation_col}"]]
+    )[["Metadata_JCP2022", f"{annotation_col}", "Metadata_pert_type", "Metadata_NCBI_Gene_ID"]]
     .dropna()
     .assign(col=lambda x: list(x[f"{annotation_col}"].str.split("|")))
     .rename(columns={"col": f"{multi_label_col}"})
     .explode(f"{multi_label_col}")
     .query(f"{multi_label_col} not in @disease_blocklist")
     .drop(columns=f"{annotation_col}")
-    .groupby("Metadata_JCP2022")[f"{multi_label_col}"]
+    .groupby(["Metadata_JCP2022", "Metadata_pert_type", "Metadata_NCBI_Gene_ID"])[f"{multi_label_col}"]
     .apply(lambda x: np.unique(x))
     .reset_index()
 )
@@ -73,17 +67,27 @@ orf_annotation_df = (
 # In[ ]:
 
 
+crispr_controls_df = pd.DataFrame(
+    {
+        "Metadata_JCP2022": ["JCP2022_805264", "JCP2022_800001", "JCP2022_800002"],
+        "Metadata_pert_type": ["poscon", "negcon", "negcon"],
+    },
+    index=[0, 1, 2],
+)
+
 crispr_annotation_df = (
     pd.read_csv(
         "../00.download-and-process-annotations/output/crispr_metadata.tsv.gz", sep="\t"
-    )[["Metadata_JCP2022", f"{annotation_col}"]]
+    )[["Metadata_JCP2022", f"{annotation_col}", "Metadata_NCBI_Gene_ID"]]
+    .merge(crispr_controls_df, on="Metadata_JCP2022", how="left")
+    .fillna(value={"Metadata_pert_type": "trt"})
     .dropna()
     .assign(col=lambda x: list(x[f"{annotation_col}"].str.split("|")))
     .rename(columns={"col": f"{multi_label_col}"})
     .explode(f"{multi_label_col}")
     .query(f"{multi_label_col} not in @disease_blocklist")
     .drop(columns=f"{annotation_col}")
-    .groupby("Metadata_JCP2022")[f"{multi_label_col}"]
+    .groupby(["Metadata_JCP2022", "Metadata_pert_type", "Metadata_NCBI_Gene_ID"])[f"{multi_label_col}"]
     .apply(lambda x: np.unique(x))
     .reset_index()
 )
@@ -95,56 +99,53 @@ crispr_annotation_df = (
 map_df = pd.DataFrame()
 
 for modality in all_profiles:
-    for name, pipeline in all_profiles[modality].items():
-        print(f"Profile type: {name}")
-        parquet_file_name = f"profiles_{pipeline}.parquet"
-        phenotypic_activity_file_name = f"phenotypic-activity-{pipeline}.csv.gz"
+    print(f"Modality: {modality}")
+    parquet_file_name = f"profiles_{all_profiles[modality]}.parquet"
+    phenotypic_activity_file_name = f"phenotypic-activity-{all_profiles[modality]}.csv.gz"
 
-        df = pd.read_parquet(f"../profiles/{parquet_file_name}")
-        phenotypic_activity_df = pd.read_csv(
-            f"output/{phenotypic_activity_file_name}"
-        ).query("below_corrected_p==True")
-        df = df.merge(phenotypic_activity_df, on="Metadata_JCP2022", how="inner").query(
-            "Metadata_pert_type!='control'"
+    df = pd.read_parquet(f"../profiles/{parquet_file_name}")
+    phenotypic_activity_df = pd.read_csv(
+        f"output/{phenotypic_activity_file_name}"
+    ).query("below_corrected_p==True")
+    df = df.merge(phenotypic_activity_df, on="Metadata_JCP2022", how="inner")
+
+    if modality == "ORF":
+        df = df.merge(
+            orf_annotation_df,
+            on="Metadata_JCP2022",
+            how="inner",
         )
-        
-        if modality == "ORF":
-            df = df.merge(
-                orf_annotation_df,
-                on="Metadata_JCP2022",
-                how="inner",
-            )
-        elif modality == "CRISPR":
-            df = df.merge(
-                crispr_annotation_df,
-                on="Metadata_JCP2022",
-                how="inner",
-            )
-
-        consensus_df = utils.consensus(df, "Metadata_NCBI_Gene_ID")
-
-        metadata_df = utils.get_metadata(consensus_df)
-        feature_df = utils.get_featuredata(consensus_df)
-        feature_values = feature_df.values
-
-        result = multilabel.average_precision(
-            metadata_df,
-            feature_values,
-            pos_sameby,
-            pos_diffby,
-            neg_sameby,
-            neg_diffby,
-            batch_size=batch_size,
-            multilabel_col=multi_label_col,
+    elif modality == "CRISPR":
+        df = df.merge(
+            crispr_annotation_df,
+            on="Metadata_JCP2022",
+            how="inner",
         )
 
-        agg_result = mean_average_precision(
-            result, pos_sameby, null_size, threshold=0.05, seed=12527
-        )
+    consensus_df = utils.consensus(df, "Metadata_NCBI_Gene_ID")
 
-        agg_result["Profile_type"] = name
+    metadata_df = utils.get_metadata(consensus_df)
+    feature_df = utils.get_featuredata(consensus_df)
+    feature_values = feature_df.values
 
-        map_df = pd.concat([map_df, agg_result], ignore_index=True)
+    result = multilabel.average_precision(
+        metadata_df,
+        feature_values,
+        pos_sameby,
+        pos_diffby,
+        neg_sameby,
+        neg_diffby,
+        batch_size=batch_size,
+        multilabel_col=multi_label_col,
+    )
 
-        map_df.to_parquet(f"output/{retrieval_label}_retrieval.parquet")
+    agg_result = mean_average_precision(
+        result, pos_sameby, null_size, threshold=0.05, seed=12527
+    )
+
+    agg_result["Modality"] = modality
+
+    map_df = pd.concat([map_df, agg_result], ignore_index=True)
+
+    map_df.to_parquet(f"output/{retrieval_label}_retrieval.parquet")
 

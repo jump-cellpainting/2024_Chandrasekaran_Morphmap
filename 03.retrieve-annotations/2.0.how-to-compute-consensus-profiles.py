@@ -7,9 +7,10 @@
 import pandas as pd
 import utils
 from copairs.map import mean_average_precision, multilabel
+import numpy as np
 
 
-# In this notebook, I want to compare six different scenarios for either computing the consensus ORF profile or how to handle duplicate profiles for downstream analysis in copairs and identify the best scenario or the one that makes the most sense. For doing this, I will be using two sets of profiles, `ORF` and `ORF-CRISPR-pipeline` and two sets of annotations, CORUM complex ID and HGNC gene group ID. Here are the six scenarios:
+# In this notebook, I want to compare six different scenarios for either computing the consensus ORF profile or how to handle duplicate profiles for downstream analysis in copairs and identify the best scenario or the one that makes the most sense. For doing this, I will be using the `ORF` profiles and two sets of annotations, CORUM complex ID and HGNC gene group ID. Here are the six scenarios:
 # - s1: group profiles by JCPID
 # - s2: group profiles by GeneID
 # - s3: group profiles by JCPID but use gene ID as pos_diffby in copairs
@@ -45,12 +46,19 @@ annotations = {
 
 profiles = {
     "ORF": "wellpos_cc_var_mad_outlier_featselect_sphering_harmony",
-    "ORF-CRISPR-pipeline": "wellpos_var_mad_int_featselect_harmony_PCA",
 }
 
 batch_size = 20000
 null_size = 20000
 fdr = 0.05
+
+
+# In[ ]:
+
+
+orf_metdata_df = pd.read_csv(
+    "../00.download-and-process-annotations/output/orf_metadata.tsv.gz", sep="\t"
+)[[f"{reagent_ID_col}", f"{gene_ID_col}", "Metadata_Insert_Length", "Metadata_Prot_Match"]]
 
 
 # In[ ]:
@@ -82,6 +90,7 @@ for scenario in scenarios:
             .drop(columns="below_corrected_p")
         )
         df = df.merge(phenotypic_activity_df, on=f"{reagent_ID_col}", how="inner")
+        df = df.merge(orf_metdata_df, on=f"{reagent_ID_col}", how="inner")
 
         for annotation in annotations:
             annotation_col = annotations[annotation]["annotation_col"]

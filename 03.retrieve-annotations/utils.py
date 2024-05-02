@@ -66,6 +66,7 @@ def remove_low_infection_efficiency_wells(df):
 
 def remove_empty_wells(df):
     """return dataframe of non-empty wells"""
+    df = df.query("Metadata_pert_type!='empty'").reset_index(drop=True)
     df = df.dropna(subset=["Metadata_broad_sample"]).reset_index(drop=True)
     df = df.dropna(subset=["Metadata_Symbol"]).reset_index(drop=True)
     return df
