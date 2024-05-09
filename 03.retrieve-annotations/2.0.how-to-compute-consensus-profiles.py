@@ -56,7 +56,7 @@ fdr = 0.05
 # In[ ]:
 
 
-orf_metdata_df = pd.read_csv(
+orf_metadata_df = pd.read_csv(
     "../00.download-and-process-annotations/output/orf_metadata.tsv.gz", sep="\t"
 )[[f"{reagent_ID_col}", f"{gene_ID_col}", "Metadata_Insert_Length", "Metadata_Prot_Match"]]
 
@@ -90,7 +90,7 @@ for scenario in scenarios:
             .drop(columns="below_corrected_p")
         )
         df = df.merge(phenotypic_activity_df, on=f"{reagent_ID_col}", how="inner")
-        df = df.merge(orf_metdata_df, on=f"{reagent_ID_col}", how="inner")
+        df = df.merge(orf_metadata_df, on=f"{reagent_ID_col}", how="inner")
 
         for annotation in annotations:
             annotation_col = annotations[annotation]["annotation_col"]
@@ -136,7 +136,7 @@ for scenario in scenarios:
                 ).drop_duplicates(subset=[gene_ID_col])
 
             print(
-                f"Scenario: {scenario} | Profile: {profile} | Annotation: {annotation}"
+                f"Scenario: {scenario} | Profile: {profile} | Annotation: {annotation} | Reagents: {consensus_df[reagent_ID_col].nunique()} | Genes: {consensus_df[gene_ID_col].nunique()}"
             )
 
             metadata_df = utils.get_metadata(consensus_df)
@@ -144,15 +144,15 @@ for scenario in scenarios:
             feature_values = feature_df.values
 
             result = multilabel.average_precision(
-            metadata_df,
-            feature_values,
-            pos_sameby,
-            pos_diffby,
-            neg_sameby,
-            neg_diffby,
-            batch_size=batch_size,
-            multilabel_col=multi_label_col,
-        )
+                metadata_df,
+                feature_values,
+                pos_sameby,
+                pos_diffby,
+                neg_sameby,
+                neg_diffby,
+                batch_size=batch_size,
+                multilabel_col=multi_label_col,
+            )
 
             agg_result = mean_average_precision(
                 result, pos_sameby, null_size, threshold=fdr, seed=12527
