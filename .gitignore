@@ -169,3 +169,5 @@ profiles_wellpos_cc_var_mad_outlier_featselect_sphering_harmony_PCA_corrected.pa
 #cos_sim
 cosine_similarities_genes_orf.parquet
 cosine_similarities_genes_crispr.parquet
+cosine_similarities_genes_orf-all.parquet
+cosine_similarities_genes_crispr-all.parquet
