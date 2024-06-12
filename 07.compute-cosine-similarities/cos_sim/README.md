@@ -1,0 +1,1 @@
+Pairwise cosine similarity between all genes in the ORF and CRISPR profiles are stored in this repository. Since the files are too large, they are not uploaded to GitHub. If you want to recreate them, you can run the notebooks `../0.compute-cosine_similarity_orf.ipynb` and `../1.compute-cosine_similarity_crispr.ipynb`.

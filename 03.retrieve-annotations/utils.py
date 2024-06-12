@@ -34,8 +34,9 @@ def get_featuredata(df):
 def remove_negcon_empty_wells(df):
     """return dataframe of non-negative control wells"""
     df = (
-        df.query('Metadata_control_type!="negcon"')
+        df.query('Metadata_pert_type!="negcon"')
         .dropna(subset=["Metadata_broad_sample"])
+        .dropna(subset=["Metadata_Symbol"])
         .reset_index(drop=True)
     )
     return df
@@ -65,7 +66,9 @@ def remove_low_infection_efficiency_wells(df):
 
 def remove_empty_wells(df):
     """return dataframe of non-empty wells"""
+    df = df.query("Metadata_pert_type!='empty'").reset_index(drop=True)
     df = df.dropna(subset=["Metadata_broad_sample"]).reset_index(drop=True)
+    df = df.dropna(subset=["Metadata_Symbol"]).reset_index(drop=True)
     return df
 
 
@@ -91,7 +94,7 @@ def consensus(profiles_df, group_by_feature):
         Name of the column
     Returns:
     -------
-    pandas.DataFrame of the same shape as `plate`
+    pandas.DataFrame 
     """
 
     metadata_df = get_metadata(profiles_df).drop_duplicates(subset=[group_by_feature])

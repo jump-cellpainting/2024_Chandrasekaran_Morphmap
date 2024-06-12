@@ -1,0 +1,21 @@
+name: visualization
+channels:
+- conda-forge
+dependencies:
+- conda-forge::python=3.10.6
+- conda-forge::pandas=1.5.1
+- conda-forge::numpy=1.23.4
+- conda-forge::pathlib=1.0.1
+- conda-forge::jupyter=1.0.0
+- conda-forge::ipykernel=6.17.1
+- conda-forge::tabulate=0.9.0
+- conda-forge::seaborn=0.12.1
+- conda-forge::matplotlib=3.8.4
+- conda-forge::plotly=5.11.0
+- conda-forge::python-kaleido=0.2.1
+- conda-forge::scipy=1.9.3
+- conda-forge::umap-learn=0.5.3
+- conda-forge::pyarrow
+- conda-forge::pycirclize
+- conda-forge::pymde=0.1.18
+- conda-forge::matplotlib-venn==0.11.10
