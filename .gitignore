@@ -173,3 +173,7 @@ cosine_similarities_genes_orf-all.parquet
 cosine_similarities_genes_crispr-all.parquet
 cosine_similarities_percentile_genes_orf.parquet
 cosine_similarities_percentile_genes_crispr.parquet
+
+# feature similarities
+crispr_feature_wide.parquet
+orf_feature_wide.parquet
