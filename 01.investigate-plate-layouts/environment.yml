@@ -12,3 +12,6 @@ dependencies:
 - conda-forge::openpyxl==3.0.9
 - conda-forge::plotly=5.11.0
 - conda-forge::python-kaleido=0.2.1
+- conda-forge::scipy=1.9.3
+- conda-forge::tqdm=4.64.1
+- conda-forge::statsmodels=0.14.2
