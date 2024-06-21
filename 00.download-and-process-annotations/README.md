@@ -85,8 +85,15 @@ Essentiality data is downloaded and stored outside the repository, as described 
 - `probability`: Probability to determine essentiality from DepMap.
 
 ### U2OS expression data from DepMap
-Expression data is download and stored outside the repository, as described in `09.download-and-process-depmap-data.ipynb`. The processed file was written to `output/OmicsExpressionProteinCodingGenesTPMLogp1_U2OS.csv.gz`. The file contains the following columns.
+Expression data is downloaded and stored outside the repository, as described in `09.download-and-process-depmap-data.ipynb`. The processed file was written to `output/OmicsExpressionProteinCodingGenesTPMLogp1_U2OS.csv.gz`. The file contains the following columns.
 
 - `geneID`: NCBI gene ID.
 - `Symbol`: Gene symbol.
 - `TPM`: Transcripts per million (TPM) normalized expression value.
+
+### U2OS gene effect data  from DepMap
+Gene effect data is downloaded and stored outside the repository, as described in `09.download-and-process-depmap-data.ipynb`. The processed file was written to `output/CRISPRGeneEffect_U2OS.csv.gz`. The file contains the following columns.
+
+- `geneID`: NCBI gene ID.
+- `Symbol`: Gene symbol.
+- `effect`: Gene effect
