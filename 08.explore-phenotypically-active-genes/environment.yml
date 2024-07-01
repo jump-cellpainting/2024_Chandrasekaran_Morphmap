@@ -13,6 +13,6 @@ dependencies:
 - conda-forge::matplotlib=3.6.2
 - conda-forge::plotly=5.11.0
 - conda-forge::python-kaleido=0.2.1
-- conda-forge::scipy=1.9.3
+- conda-forge::scipy=1.10.0
 - conda-forge::pyarrow
 - conda-forge::tqdm=4.64.1
