@@ -1,3 +1,3 @@
-modality,cancer_False_phenotype_False,cancer_False_phenotype_True,cancer_True_phenotype_False,cancer_True_phenotype_True,odds_ratio,pvalue
-ORF,1225,4697,1724,6093,0.9217421447367056,0.0536058209763923
-CRISPR,693,1732,1650,3896,0.944757505773672,0.297418536829328
+modality,cancer_False_phenotype_False,cancer_False_phenotype_True,cancer_True_phenotype_False,cancer_True_phenotype_True,odds_ratio,pvalue,confidence_interval_low,confidence_interval_high
+ORF,1225,4697,1724,6093,0.9217421447367056,0.0536058209763923,0.8479019230860393,1.0018506255534296
+CRISPR,693,1732,1650,3896,0.944757505773672,0.297418536829328,0.8489614466967442,1.0508501844050255
