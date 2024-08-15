@@ -1,0 +1,8 @@
+name: list-features
+channels:
+- conda-forge
+dependencies:
+- conda-forge::python=3.10.6
+- conda-forge::pandas=1.5.1
+- conda-forge::jupyter=1.0.0
+- conda-forge::ipykernel=6.17.1
