@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2024-08-15T13:51:03.920615</dc:date>
+    <dc:date>2024-08-15T13:53:40.158924</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -44,7 +44,7 @@ C 57.860629 197.518256 64.290808 220.056676 76.421595 239.586036
 C 88.552382 259.115396 105.906954 274.868059 126.51625 285.05672 
 C 147.125546 295.24538 170.179482 299.469553 193.062342 297.249962 
 C 215.945203 295.03037 237.757536 286.45426 256.024502 272.494681 
-" clip-path="url(#pfdc2369c62)" style="fill: #009e73; opacity: 0.8"/>
+" clip-path="url(#p9360672072)" style="fill: #009e73; opacity: 0.8"/>
    </g>
    <g id="patch_3">
     <path d="M 256.024502 76.561319 
@@ -60,7 +60,7 @@ C 414.459371 155.867356 409.689493 137.512776 400.604228 121.213157
 C 391.518963 104.913537 378.416337 91.203557 362.544821 81.389557 
 C 346.673304 71.575557 328.553533 65.979467 309.912028 65.134505 
 C 291.270524 64.289543 272.718788 68.223427 256.024502 76.561319 
-" clip-path="url(#pfdc2369c62)" style="fill: #d55e00; opacity: 0.8"/>
+" clip-path="url(#p9360672072)" style="fill: #d55e00; opacity: 0.8"/>
    </g>
    <g id="patch_4">
     <path d="M 256.024502 272.494681 
@@ -72,7 +72,7 @@ C 237.825239 85.650866 222.51384 99.634415 211.815115 116.936737
 C 201.11639 134.23906 195.447745 154.185113 195.447745 174.528 
 C 195.447745 194.870887 201.11639 214.81694 211.815115 232.119263 
 C 222.51384 249.421585 237.825239 263.405134 256.024502 272.494681 
-" clip-path="url(#pfdc2369c62)" style="fill: #95b050; opacity: 0.8"/>
+" clip-path="url(#p9360672072)" style="fill: #95b050; opacity: 0.8"/>
    </g>
    <g id="text_1">
     <!-- 4806 -->
@@ -477,8 +477,8 @@ z
     </g>
    </g>
    <g id="text_6">
-    <!-- Total genes with a phenotype=10352) -->
-    <g transform="translate(102.222656 44.96944) scale(0.14 -0.14)">
+    <!-- Total genes with a phenotype=10352 -->
+    <g transform="translate(104.95375 44.96944) scale(0.14 -0.14)">
      <defs>
       <path id="DejaVuSans-54" d="M -19 4666 
 L 3928 4666 
@@ -787,19 +787,6 @@ L 678 1100
 L 678 1631 
 z
 " transform="scale(0.015625)"/>
-      <path id="DejaVuSans-29" d="M 513 4856 
-L 1013 4856 
-Q 1481 4119 1714 3412 
-Q 1947 2706 1947 2009 
-Q 1947 1309 1714 600 
-Q 1481 -109 1013 -844 
-L 513 -844 
-Q 928 -128 1133 580 
-Q 1338 1288 1338 2009 
-Q 1338 2731 1133 3434 
-Q 928 4138 513 4856 
-z
-" transform="scale(0.015625)"/>
      </defs>
      <use xlink:href="#DejaVuSans-54"/>
      <use xlink:href="#DejaVuSans-6f" x="44.083984"/>
@@ -835,13 +822,12 @@ z
      <use xlink:href="#DejaVuSans-33" x="1683.488281"/>
      <use xlink:href="#DejaVuSans-35" x="1747.111328"/>
      <use xlink:href="#DejaVuSans-32" x="1810.734375"/>
-     <use xlink:href="#DejaVuSans-29" x="1874.357422"/>
     </g>
    </g>
   </g>
  </g>
  <defs>
-  <clipPath id="pfdc2369c62">
+  <clipPath id="p9360672072">
    <rect x="57.6" y="50.96944" width="357.12" height="247.11712"/>
   </clipPath>
  </defs>
