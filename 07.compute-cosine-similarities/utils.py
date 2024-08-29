@@ -459,7 +459,7 @@ def download_images(metadata):
             mv_cmd = f"mv images/{perturbation}/{plate}_{well}_T0001{field}*{channel}.tif images/{perturbation}/{perturbation}_{row.channel}.tiff"
             os.system(mv_cmd)
 
-def brighten_contrast_stretch(image, low_percentile=1, high_percentile=99):
+def brighten_contrast_stretch(image, low_percentile=2, high_percentile=98):
     p_low, p_high = np.percentile(image, (low_percentile, high_percentile))
     return skimage.exposure.rescale_intensity(image, in_range=(p_low, p_high))
 
