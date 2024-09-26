@@ -413,7 +413,7 @@ def find_s3_subfolders(bucket_name, prefix, subfolder_name):
     return subfolder_correct_name
 
 
-def download_images(metadata):
+def download_images(metadata, folder="images"):
     # Example
     # aws s3 ls --no-sign-request s3://cellpainting-gallery/cpg0016-jump/source_13/images/20221109_Run5/images/CP-CC9-R5-22/CP-CC9-R5-22_C08_T0001F008L01A02Z01C03.tif
     # aws s3 ls --no-sign-request s3://cellpainting-gallery/cpg0016-jump/source_4/images/2021_05_31_Batch2/images/BR00123530__2021-05-11T17_11_46-Measurement1/Images/r01c14f08p01-ch6sk1fk1fl1.tiff
@@ -444,9 +444,9 @@ def download_images(metadata):
             images_folder = f"{accession_number}/{source}/images/{batch}/images/"
             plate = find_s3_subfolders(bucket, images_folder, row.Metadata_Plate)
             channel = f"ch{orf_channel_map[row.channel]}"
-            download_cmd = f'{aws_s3_prefix} {sign_request} s3://{bucket}/{images_folder}{plate}/Images/ images/{perturbation}/ --exclude "*" --include "{row_name}{col_name}{field}{plane}-{channel}*.tiff"'
+            download_cmd = f'{aws_s3_prefix} {sign_request} s3://{bucket}/{images_folder}{plate}/Images/ {folder}/{perturbation}/ --exclude "*" --include "{row_name}{col_name}{field}{plane}-{channel}*.tiff"'
             os.system(download_cmd)
-            mv_cmd = f"mv images/{perturbation}/{row_name}{col_name}{field}{plane}-{channel}*.tiff images/{perturbation}/{perturbation}_{row.channel}.tiff"
+            mv_cmd = f"mv {folder}/{perturbation}/{row_name}{col_name}{field}{plane}-{channel}*.tiff {folder}/{perturbation}/{perturbation}_{row.channel}.tiff"
             os.system(mv_cmd)
         else:
             well = f"{row.Metadata_Well}"
@@ -454,9 +454,9 @@ def download_images(metadata):
             channel = f"C0{crispr_channel_map[row.channel]}"
             plate = row.Metadata_Plate
             images_folder = f"{accession_number}/{source}/images/{batch}/images/"
-            download_cmd = f'{aws_s3_prefix} {sign_request} s3://{bucket}/{images_folder}{plate}/ images/{perturbation}/ --exclude "*" --include "{plate}_{well}_T0001{field}*{channel}.tif"'
+            download_cmd = f'{aws_s3_prefix} {sign_request} s3://{bucket}/{images_folder}{plate}/ {folder}/{perturbation}/ --exclude "*" --include "{plate}_{well}_T0001{field}*{channel}.tif"'
             os.system(download_cmd)
-            mv_cmd = f"mv images/{perturbation}/{plate}_{well}_T0001{field}*{channel}.tif images/{perturbation}/{perturbation}_{row.channel}.tiff"
+            mv_cmd = f"mv {folder}/{perturbation}/{plate}_{well}_T0001{field}*{channel}.tif {folder}/{perturbation}/{perturbation}_{row.channel}.tiff"
             os.system(mv_cmd)
 
 def brighten_contrast_stretch(image, low_percentile=2, high_percentile=98):
@@ -488,7 +488,7 @@ def standardize_image(img, target_size=(1080, 1080)):
 
 
 def create_facet_grid_montage(
-    images, row_labels, col_labels, grid_shape, image_labels=None, label_font_size=14
+    images, row_labels, col_labels, grid_shape, image_labels=None, label_font_size=14, title=None
 ):
     # Create the montage
     m = skimage.util.montage(images, grid_shape=grid_shape)
@@ -561,6 +561,14 @@ def create_facet_grid_montage(
         spine.set_visible(True)
         spine.set_color("white")
         spine.set_linewidth(2)
+
+    # Add a title
+    if title is not None:
+        if n_rows == 2:
+            y=0.8
+        if n_rows == 3:
+            y=0.9
+        plt.suptitle(f'{title}', fontsize=14, y=y) 
 
     # Adjust layout
     plt.tight_layout()
