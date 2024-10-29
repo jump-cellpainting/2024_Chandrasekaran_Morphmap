@@ -6,7 +6,7 @@
   <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
    <cc:Work>
     <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:date>2024-08-15T13:53:39.979264</dc:date>
+    <dc:date>2024-10-25T16:55:50.672248</dc:date>
     <dc:format>image/svg+xml</dc:format>
     <dc:creator>
      <cc:Agent>
@@ -44,7 +44,7 @@ C 72.471572 199.32651 79.415304 223.636542 92.513213 244.693866
 C 105.611121 265.751189 124.347206 282.726236 146.591035 293.688817 
 C 168.834863 304.651397 193.710125 309.169633 218.388317 306.729768 
 C 243.066508 304.289902 266.575416 294.988055 286.241901 279.881916 
-" clip-path="url(#p03241546a3)" style="fill: #009e73; opacity: 0.8"/>
+" clip-path="url(#pce2542a985)" style="fill: #009e73; opacity: 0.8"/>
    </g>
    <g id="patch_3">
     <path d="M 286.241901 69.174084 
@@ -60,7 +60,7 @@ C 399.848428 159.983658 396.845154 145.594768 391.027173 132.264764
 C 385.209192 118.934761 376.700871 106.94859 366.036421 97.058828 
 C 355.371971 87.169066 342.779359 79.587118 329.049237 74.789032 
 C 315.319114 69.990946 300.74498 68.079288 286.241901 69.174084 
-" clip-path="url(#p03241546a3)" style="fill: #d55e00; opacity: 0.8"/>
+" clip-path="url(#pce2542a985)" style="fill: #d55e00; opacity: 0.8"/>
    </g>
    <g id="patch_4">
     <path d="M 286.241901 279.881916 
@@ -72,11 +72,11 @@ C 259.681434 71.179058 234.837385 83.155822 216.725596 102.686347
 C 198.613808 122.216873 188.541109 147.891966 188.541109 174.528 
 C 188.541109 201.164034 198.613808 226.839127 216.725596 246.369653 
 C 234.837385 265.900178 259.681434 277.876942 286.241901 279.881916 
-" clip-path="url(#p03241546a3)" style="fill: #95b050; opacity: 0.8"/>
+" clip-path="url(#pce2542a985)" style="fill: #95b050; opacity: 0.8"/>
    </g>
    <g id="text_1">
     <!-- 7267 -->
-    <g transform="translate(112.691341 178.391125) scale(0.14 -0.14)">
+    <g transform="translate(105.056341 180.04675) scale(0.2 -0.2)">
      <defs>
       <path id="DejaVuSans-37" d="M 525 4666 
 L 3525 4666 
@@ -151,7 +151,7 @@ z
    </g>
    <g id="text_2">
     <!-- 2633 -->
-    <g transform="translate(351.191315 178.391125) scale(0.14 -0.14)">
+    <g transform="translate(343.556315 180.04675) scale(0.2 -0.2)">
      <defs>
       <path id="DejaVuSans-33" d="M 2597 2516 
 Q 3050 2419 3304 2112 
@@ -194,7 +194,7 @@ z
    </g>
    <g id="text_3">
     <!-- 5343 -->
-    <g transform="translate(245.537656 178.391125) scale(0.14 -0.14)">
+    <g transform="translate(237.902656 180.04675) scale(0.2 -0.2)">
      <defs>
       <path id="DejaVuSans-35" d="M 691 4666 
 L 3169 4666 
@@ -249,7 +249,7 @@ z
    </g>
    <g id="text_4">
     <!-- ORF -->
-    <g transform="translate(176.517263 329.937126) scale(0.14 -0.14)">
+    <g transform="translate(168.288513 332.976501) scale(0.18 -0.18)">
      <defs>
       <path id="DejaVuSans-4f" d="M 2522 4238 
 Q 1834 4238 1429 3725 
@@ -321,7 +321,7 @@ z
    </g>
    <g id="text_5">
     <!-- CRISPR -->
-    <g transform="translate(294.194768 302.74447) scale(0.14 -0.14)">
+    <g transform="translate(294.194768 305.783845) scale(0.18 -0.18)">
      <defs>
       <path id="DejaVuSans-43" d="M 4122 4306 
 L 4122 3641 
@@ -414,7 +414,7 @@ z
    </g>
    <g id="text_6">
     <!-- Total genes=15243 -->
-    <g transform="translate(168.3125 35.472) scale(0.14 -0.14)">
+    <g transform="translate(148.9275 35.472) scale(0.18 -0.18)">
      <defs>
       <path id="DejaVuSans-54" d="M -19 4666 
 L 3928 4666 
@@ -669,7 +669,7 @@ z
   </g>
  </g>
  <defs>
-  <clipPath id="p03241546a3">
+  <clipPath id="pce2542a985">
    <rect x="72.261888" y="41.472" width="327.796225" height="266.112"/>
   </clipPath>
  </defs>
