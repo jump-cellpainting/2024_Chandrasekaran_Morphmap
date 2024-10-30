@@ -459,6 +459,7 @@ def download_images(metadata, folder="images"):
             mv_cmd = f"mv {folder}/{perturbation}/{plate}_{well}_T0001{field}*{channel}.tif {folder}/{perturbation}/{perturbation}_{row.channel}.tiff"
             os.system(mv_cmd)
 
+
 def brighten_contrast_stretch(image, low_percentile=2, high_percentile=98):
     p_low, p_high = np.percentile(image, (low_percentile, high_percentile))
     return skimage.exposure.rescale_intensity(image, in_range=(p_low, p_high))
@@ -488,7 +489,14 @@ def standardize_image(img, target_size=(1080, 1080)):
 
 
 def create_facet_grid_montage(
-    images, row_labels, col_labels, grid_shape, image_labels=None, label_font_size=14, title=None
+    images,
+    row_labels,
+    col_labels,
+    grid_shape,
+    image_labels=None,
+    label_font_size=14,
+    title=None,
+    scale_bars=None,
 ):
     # Create the montage
     m = skimage.util.montage(images, grid_shape=grid_shape)
@@ -562,13 +570,44 @@ def create_facet_grid_montage(
         spine.set_color("white")
         spine.set_linewidth(2)
 
+    # Add scale bars to each subplot
+    if scale_bars is not None:
+        scale_units = "μm"
+        for i in range(n_rows):
+            for j in range(n_cols):
+                units_per_pixel, scale_bar_length_units = scale_bars[n_cols*i+j]
+                # Calculate position for scale bar (bottom right corner of each subplot)
+                scale_bar_y = (i + 1) * img_height - img_height * 0.15  # 15% from bottom
+                scale_bar_x_start = (j + 1) * img_width - img_width * 0.15  # 15% from right edge
+                scale_bar_x_end = scale_bar_x_start + (units_per_pixel * scale_bar_length_units)
+
+                # Draw the scale bar
+                ax.plot(
+                    [scale_bar_x_start, scale_bar_x_end],
+                    [scale_bar_y, scale_bar_y],
+                    color='white',
+                    linewidth=3,
+                )
+
+                # Add scale bar label
+                ax.text(
+                    scale_bar_x_start,
+                    (i + 1) * img_height - img_height * 0.12,
+                    f'{scale_bar_length_units} {scale_units}',
+                    color='white',
+                    ha='center',
+                    va='top',
+                    fontsize=9,
+                    fontweight='bold',
+                )
+
     # Add a title
     if title is not None:
         if n_rows == 2:
-            y=0.8
+            y = 0.8
         if n_rows == 3:
-            y=0.9
-        plt.suptitle(f'{title}', fontsize=14, y=y) 
+            y = 0.9
+        plt.suptitle(f"{title}", fontsize=14, y=y)
 
     # Adjust layout
     plt.tight_layout()
