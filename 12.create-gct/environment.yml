@@ -1,0 +1,16 @@
+name: gct
+channels:
+- conda-forge
+dependencies:
+- conda-forge::python=3.10.6
+- conda-forge::pandas=1.5.1
+- conda-forge::numpy=1.23.4
+- conda-forge::pathlib=1.0.1
+- conda-forge::jupyter=1.0.0
+- conda-forge::ipykernel=6.17.1
+- conda-forge::tabulate=0.9.0
+- conda-forge::scipy=1.9.3
+- conda-forge::pyarrow
+- pip
+- pip:
+  - git+https://github.com/cytomining/pycytominer@98da73fd8b7d205ada591cf0f88ebb2bbf314719

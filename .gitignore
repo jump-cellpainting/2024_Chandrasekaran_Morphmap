@@ -192,3 +192,7 @@ crispr_feat_pert_pval_mwu.parquet
 crispr-chromosome-arm-similarity-no-correction.png
 crispr-chromosome-arm-similarity.png
 orf-chromosome-arm-similarity.png
+
+# gct files
+orf_phenotypically_active_wellpos_cc_var_mad_outlier_featselect_sphering_harmony.gct
+crispr_phenotypically_active_wellpos_cc_var_mad_outlier_featselect_sphering_harmony_PCA_corrected.gct
