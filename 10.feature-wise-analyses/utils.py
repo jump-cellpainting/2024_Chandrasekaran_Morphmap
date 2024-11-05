@@ -14,6 +14,8 @@ import os
 import boto3
 from botocore import UNSIGNED
 from botocore.client import Config
+from mpl_toolkits.axes_grid1.anchored_artists import AnchoredSizeBar
+import matplotlib.font_manager as fm
 
 
 row_name_map = {
@@ -137,7 +139,7 @@ def consensus(profiles_df, group_by_feature):
         Name of the column
     Returns:
     -------
-    pandas.DataFrame 
+    pandas.DataFrame
     """
 
     metadata_df = get_metadata(profiles_df).drop_duplicates(subset=[group_by_feature])
@@ -169,9 +171,10 @@ def remove_nan_features(df):
     features_to_remove = [
         _ for _ in list(df.columns[list(set(c))]) if not _.startswith("Metadata_")
     ]
-    print(f'Removed nan features: {features_to_remove}')
+    print(f"Removed nan features: {features_to_remove}")
     df.drop(features_to_remove, axis=1, inplace=True)
     return df
+
 
 # Copied from https://github.com/cytomining/pycytominer/blob/90c9a899cf634d96da3a325fb07c4cfdb9640c58/pycytominer/cyto_utils/parse_cp_features.py
 def parse_cp_features(
@@ -313,6 +316,7 @@ def parse_cp_features(
         "channel": channel,
     }
 
+
 def find_s3_subfolders(bucket_name, prefix, subfolder_name):
     # Create an S3 client without authentication for public buckets
     s3 = boto3.client("s3", config=Config(signature_version=UNSIGNED))
@@ -381,6 +385,7 @@ def download_images(metadata):
             mv_cmd = f"mv images/{perturbation}/{plate}_{well}_T0001{field}*{channel}.tif images/{perturbation}/{perturbation}_{row.channel}.tiff"
             os.system(mv_cmd)
 
+
 def brighten_contrast_stretch(image, low_percentile=2, high_percentile=98):
     p_low, p_high = np.percentile(image, (low_percentile, high_percentile))
     return skimage.exposure.rescale_intensity(image, in_range=(p_low, p_high))
@@ -410,7 +415,13 @@ def standardize_image(img, target_size=(1080, 1080)):
 
 
 def create_facet_grid_montage(
-    images, row_labels, col_labels, grid_shape, image_labels=None, label_font_size=14
+    images,
+    row_labels,
+    col_labels,
+    grid_shape,
+    image_labels=None,
+    label_font_size=14,
+    scale_bars = None
 ):
     # Create the montage
     m = skimage.util.montage(images, grid_shape=grid_shape)
@@ -422,7 +433,7 @@ def create_facet_grid_montage(
     img_height, img_width = height // n_rows, width // n_cols
 
     # Create a new figure
-    fig, ax = plt.subplots(figsize=(12, 10))  # Adjust size as needed
+    fig, ax = plt.subplots(figsize=(12, 10))
 
     # Display the montage
     ax.imshow(m_rescaled, cmap="gray")
@@ -483,6 +494,37 @@ def create_facet_grid_montage(
         spine.set_visible(True)
         spine.set_color("white")
         spine.set_linewidth(2)
+
+    # Add scale bars to each subplot
+    if scale_bars is not None:
+        scale_units = "μm"
+        for i in range(n_rows):
+            for j in range(n_cols):
+                units_per_pixel, scale_bar_length_units = scale_bars[n_cols*i+j]
+                # Calculate position for scale bar (bottom right corner of each subplot)
+                scale_bar_y = (i + 1) * img_height - img_height * 0.15  # 15% from bottom
+                scale_bar_x_start = (j + 1) * img_width - img_width * 0.15  # 15% from right edge
+                scale_bar_x_end = scale_bar_x_start + (units_per_pixel * scale_bar_length_units)
+
+                # Draw the scale bar
+                ax.plot(
+                    [scale_bar_x_start, scale_bar_x_end],
+                    [scale_bar_y, scale_bar_y],
+                    color='white',
+                    linewidth=3,
+                )
+
+                # Add scale bar label
+                ax.text(
+                    scale_bar_x_start,
+                    (i + 1) * img_height - img_height * 0.12,
+                    f'{scale_bar_length_units} {scale_units}',
+                    color='white',
+                    ha='center',
+                    va='top',
+                    fontsize=9,
+                    fontweight='bold',
+                )
 
     # Adjust layout
     plt.tight_layout()
