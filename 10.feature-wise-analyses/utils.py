@@ -434,9 +434,47 @@ def create_facet_grid_montage(
 
     # Create a new figure
     fig, ax = plt.subplots(figsize=(12, 10))
+    fig_size = fig.get_size_inches()*fig.dpi
 
     # Display the montage
     ax.imshow(m_rescaled, cmap="gray")
+
+    # Add a border around the entire plot
+    for spine in ax.spines.values():
+        spine.set_visible(True)
+        spine.set_color("white")
+        spine.set_linewidth(2)
+
+    # Add scale bars to each subplot
+    if scale_bars is not None:
+        scale_units = "μm"
+        for i in range(n_rows):
+            for j in range(n_cols):
+                image_length_units, scale_bar_length_units = scale_bars[n_cols*i+j]
+                # Calculate position for scale bar (bottom right corner of each subplot)
+                scale_bar_y = (i + 1) * img_height - img_height * 0.15  # 15% from bottom
+                scale_bar_x_start = (j + 1) * img_width - img_width * 0.25  # 25% from right edge
+                scale_bar_x_end = scale_bar_x_start + ((scale_bar_length_units / image_length_units) * 1080)
+
+                # Draw the scale bar
+                ax.plot(
+                    [scale_bar_x_start, scale_bar_x_end],
+                    [scale_bar_y, scale_bar_y],
+                    color='white',
+                    linewidth=3,
+                )
+
+                # Add scale bar label
+                ax.text(
+                    scale_bar_x_start,
+                    (i + 1) * img_height - img_height * 0.12,
+                    f'{scale_bar_length_units} {scale_units}',
+                    color='white',
+                    ha='center',
+                    va='top',
+                    fontsize=9,
+                    fontweight='bold',
+                )
 
     # Add row labels
     for i, label in enumerate(row_labels):
@@ -481,50 +519,13 @@ def create_facet_grid_montage(
 
     # Add grid lines
     for i in range(1, n_rows):
-        ax.axhline(y=i * img_height, color="white", linewidth=2)
+        ax.axhline(y=i * img_height, color="white", linewidth=1)
     for i in range(1, n_cols):
-        ax.axvline(x=i * img_width, color="white", linewidth=2)
+        ax.axvline(x=i * img_width, color="white", linewidth=1)
 
     # Remove axes ticks
     ax.set_xticks([])
     ax.set_yticks([])
-
-    # Add a border around the entire plot
-    for spine in ax.spines.values():
-        spine.set_visible(True)
-        spine.set_color("white")
-        spine.set_linewidth(2)
-
-    # Add scale bars to each subplot
-    if scale_bars is not None:
-        scale_units = "μm"
-        for i in range(n_rows):
-            for j in range(n_cols):
-                units_per_pixel, scale_bar_length_units = scale_bars[n_cols*i+j]
-                # Calculate position for scale bar (bottom right corner of each subplot)
-                scale_bar_y = (i + 1) * img_height - img_height * 0.15  # 15% from bottom
-                scale_bar_x_start = (j + 1) * img_width - img_width * 0.15  # 15% from right edge
-                scale_bar_x_end = scale_bar_x_start + (units_per_pixel * scale_bar_length_units)
-
-                # Draw the scale bar
-                ax.plot(
-                    [scale_bar_x_start, scale_bar_x_end],
-                    [scale_bar_y, scale_bar_y],
-                    color='white',
-                    linewidth=3,
-                )
-
-                # Add scale bar label
-                ax.text(
-                    scale_bar_x_start,
-                    (i + 1) * img_height - img_height * 0.12,
-                    f'{scale_bar_length_units} {scale_units}',
-                    color='white',
-                    ha='center',
-                    va='top',
-                    fontsize=9,
-                    fontweight='bold',
-                )
 
     # Adjust layout
     plt.tight_layout()
