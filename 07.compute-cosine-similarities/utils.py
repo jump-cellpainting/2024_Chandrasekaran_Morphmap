@@ -575,11 +575,11 @@ def create_facet_grid_montage(
         scale_units = "μm"
         for i in range(n_rows):
             for j in range(n_cols):
-                units_per_pixel, scale_bar_length_units = scale_bars[n_cols*i+j]
+                image_length_units, scale_bar_length_units = scale_bars[n_cols*i+j]
                 # Calculate position for scale bar (bottom right corner of each subplot)
                 scale_bar_y = (i + 1) * img_height - img_height * 0.15  # 15% from bottom
-                scale_bar_x_start = (j + 1) * img_width - img_width * 0.15  # 15% from right edge
-                scale_bar_x_end = scale_bar_x_start + (units_per_pixel * scale_bar_length_units)
+                scale_bar_x_start = (j + 1) * img_width - img_width * 0.25  # 25% from right edge
+                scale_bar_x_end = scale_bar_x_start + ((scale_bar_length_units / image_length_units) * 1080)
 
                 # Draw the scale bar
                 ax.plot(
