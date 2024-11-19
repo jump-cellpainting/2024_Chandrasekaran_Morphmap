@@ -391,6 +391,70 @@ def brighten_contrast_stretch(image, low_percentile=2, high_percentile=98):
     return skimage.exposure.rescale_intensity(image, in_range=(p_low, p_high))
 
 
+def find_dense_crop(image: np.ndarray, crop_size: int = 512, min_density: float = 0.1) -> np.ndarray:
+    """
+    Find a crop region with sufficient content density.
+    
+    Args:
+        image: Input image as numpy array
+        crop_size: Size of the square crop (default: 512 pixels)
+        min_density: Minimum fraction of pixels that should be above threshold (default: 0.1)
+        
+    Returns:
+        Cropped image as numpy array
+    """
+    from skimage import filters
+    from skimage.color import rgb2gray
+    
+    # Convert to grayscale if image is multichannel
+    if image.ndim > 2:
+        gray = rgb2gray(image)
+    else:
+        gray = image
+    
+    # Get image dimensions
+    h, w = gray.shape
+    
+    # Calculate threshold for content
+    thresh = filters.threshold_otsu(gray)
+    binary = gray > thresh
+    
+    # Define grid of possible crop positions
+    step_size = crop_size // 2  # 50% overlap between crops
+    
+    best_density = 0
+    best_crop = None
+    best_pos = None
+    
+    # Try different positions
+    for y in range(0, h - crop_size + 1, step_size):
+        for x in range(0, w - crop_size + 1, step_size):
+            # Extract crop region from binary image
+            crop_binary = binary[y:y + crop_size, x:x + crop_size]
+            
+            # Calculate density (fraction of pixels above threshold)
+            density = np.mean(crop_binary)
+            
+            # If density is good enough, return this crop
+            if density >= min_density:
+                return image[y:y + crop_size, x:x + crop_size]
+            
+            # Keep track of best crop so far
+            if density > best_density:
+                best_density = density
+                best_pos = (y, x)
+    
+    # If no crop meets minimum density, return the best one found
+    if best_pos is not None:
+        y, x = best_pos
+        return image[y:y + crop_size, x:x + crop_size]
+    
+    # If all else fails, return center crop
+    start_y = (h - crop_size) // 2
+    start_x = (w - crop_size) // 2
+    return image[start_y:start_y + crop_size, start_x:start_x + crop_size]
+
+
 def standardize_image(img, target_size=(1080, 1080)):
     # Resize image to fit within target size while maintaining aspect ratio
     h, w = img.shape[:2]
@@ -421,8 +485,22 @@ def create_facet_grid_montage(
     grid_shape,
     image_labels=None,
     label_font_size=14,
-    scale_bars = None
+    scale_bars=None,
+    image_size=512,
 ):
+    """
+    Create a montage of images with labels and scale bars.
+    
+    Args:
+        images: List of images to display
+        row_labels: Labels for rows
+        col_labels: Labels for columns
+        grid_shape: Tuple of (n_rows, n_cols)
+        image_labels: Optional labels for each image
+        label_font_size: Font size for labels
+        scale_bars: List of tuples (image_length_units, scale_bar_length_units)
+        image_size: Size of each image (default: 512 for cropped images)
+    """
     # Create the montage
     m = skimage.util.montage(images, grid_shape=grid_shape)
     m_rescaled = skimage.exposure.rescale_intensity(m, out_range=(0, 1))
@@ -433,7 +511,7 @@ def create_facet_grid_montage(
     img_height, img_width = height // n_rows, width // n_cols
 
     # Create a new figure
-    fig, ax = plt.subplots(figsize=(12, 10))
+    fig, ax = plt.subplots(figsize=(10, 8))
     fig_size = fig.get_size_inches()*fig.dpi
 
     # Display the montage
@@ -454,7 +532,8 @@ def create_facet_grid_montage(
                 # Calculate position for scale bar (bottom right corner of each subplot)
                 scale_bar_y = (i + 1) * img_height - img_height * 0.15  # 15% from bottom
                 scale_bar_x_start = (j + 1) * img_width - img_width * 0.25  # 25% from right edge
-                scale_bar_x_end = scale_bar_x_start + ((scale_bar_length_units / image_length_units) * 1080)
+                # Adjust scale bar length based on image_size
+                scale_bar_x_end = scale_bar_x_start + ((scale_bar_length_units / image_length_units) * image_size)
 
                 # Draw the scale bar
                 ax.plot(
@@ -466,7 +545,7 @@ def create_facet_grid_montage(
 
                 # Add scale bar label
                 ax.text(
-                    scale_bar_x_start,
+                    scale_bar_x_start + (scale_bar_x_end - scale_bar_x_start) / 3,
                     (i + 1) * img_height - img_height * 0.12,
                     f'{scale_bar_length_units} {scale_units}',
                     color='white',
