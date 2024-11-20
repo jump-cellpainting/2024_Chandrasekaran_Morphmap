@@ -455,6 +455,30 @@ def find_dense_crop(image: np.ndarray, crop_size: int = 512, min_density: float 
     return image[start_y:start_y + crop_size, start_x:start_x + crop_size]
 
 
+def get_top_right_crop(image: np.ndarray, crop_size: int = 512) -> np.ndarray:
+    """
+    Get the top right crop of an image.
+    
+    Args:
+        image: Input image as numpy array
+        crop_size: Size of the square crop (default: 512 pixels)
+        
+    Returns:
+        Cropped image as numpy array
+    """
+    # Get image dimensions
+    height, width = image.shape[:2]
+    
+    # Calculate crop coordinates
+    x_start = max(0, width - crop_size)
+    y_start = 0
+    x_end = width
+    y_end = min(height, crop_size)
+    
+    # Return the cropped region
+    return image[y_start:y_end, x_start:x_end]
+
+
 def standardize_image(img, target_size=(1080, 1080)):
     # Resize image to fit within target size while maintaining aspect ratio
     h, w = img.shape[:2]
