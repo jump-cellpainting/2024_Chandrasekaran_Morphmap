@@ -20,7 +20,7 @@
 
 <small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
 
-**Link to the biorxiv manuscript: _Not yet available_**
+**Link to the biorxiv manuscript: https://www.biorxiv.org/content/10.1101/2024.12.02.624527 **
 
 This is a dataset of images and profiles generated as a part of the [JUMP Cell Painting (JUMP-CP) project](https://jump-cellpainting.broadinstitute.org/). Genes were either over-expressed (ORF) or knocked out (CRISPR) and the cells were assayed using an imaging assay called [Cell Painting](https://jump-cellpainting.broadinstitute.org/cell-painting). From the images, features were extracted using the [CellProfiler](https://cellprofiler.org/) software. The features were then processed and the resulting profiles were the analyzed using notebooks in this repository. 
 
