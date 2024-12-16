@@ -24,6 +24,8 @@
 
 This is a dataset of images and profiles generated as a part of the [JUMP Cell Painting (JUMP-CP) project](https://jump-cellpainting.broadinstitute.org/). Genes were either over-expressed (ORF) or knocked out (CRISPR) and the cells were assayed using an imaging assay called [Cell Painting](https://jump-cellpainting.broadinstitute.org/cell-painting). From the images, features were extracted using the [CellProfiler](https://cellprofiler.org/) software. The features were then processed and the resulting profiles were the analyzed using notebooks in this repository. 
 
+**Many resources and additional views / formats of the data are available at the [JUMP Cell Painting Hub](https://broad.io/jump).**
+
 In the following sections, instructions are provided for downloading the various components of this dataset, processing the dataset and analyzing the profiles.
 
 ## Metadata
